@@ -5,12 +5,12 @@ from .serializer import ProjectSerializer
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all().order_by('-created_at')
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-# Create your views here.
     def get_permissions(self):
+        # Lectura pública
         if self.action in ['list', 'retrieve']:
             permission_classes = [permissions.AllowAny]
-        else: 
+        # Modificaciones solo para administradores
+        else:
             permission_classes = [permissions.IsAdminUser]
-        return [permissions() for permissions in permission_classes]
+        return [permission() for permission in permission_classes]
