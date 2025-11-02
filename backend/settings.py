@@ -12,12 +12,13 @@ MEDIA_URL = '/media/'
 
 # -----------------------------
 # CONFIGURACIÓN GENERAL
-# -----------------------------
-SECRET_KEY = 'django-insecure-XXXXXXX'  # 🔒 Ocúltala en Render como variable de entorno
+# ----------------------------- 
+SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-secret-key') # 🔒 Ocúltala en Render como variable de entorno
 DEBUG = False
 
 ALLOWED_HOSTS = [
     'portfolio-api-x6xk.onrender.com',
+    'https://andres-developer-s3mh.vercel.app', 
     'localhost',
     '127.0.0.1'
 ]
@@ -62,6 +63,7 @@ MIDDLEWARE = [
 # -----------------------------
 CORS_ALLOWED_ORIGINS = [
     "https://andres-gutierrez.vercel.app",
+    "https://andres-developer-s3mh.vercel.app"
 ]
 
 # Si quieres aceptar peticiones desde el admin de Django en desarrollo:
@@ -117,5 +119,4 @@ USE_TZ = True
 # -----------------------------
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-SECRET_KEY = 'django-insecure-6f@r1du-shmdd2adltr1-3-9g^u@q+o_6lo$1-08(l(aqq$9#j'
+#SECRET_KEY = 'django-insecure-6f@r1du-shmdd2adltr1-3-9g^u@q+o_6lo$1-08(l(aqq$9#j'
