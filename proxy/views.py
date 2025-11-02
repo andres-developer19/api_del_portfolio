@@ -1,41 +1,16 @@
-import os
-import requests
 from django.http import JsonResponse
 from django.views import View
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from projects.models import Project
+from projects.serializers import ProjectSerializer
+from experience.models import Experience
+from experience.serializers import ExperienceSerializer
 
-
-# --- 🔑 Función para obtener un nuevo access token automáticamente ---
-def get_access_token():
-    refresh_token = os.environ.get("API_REFRESH_TOKEN")
-
-    if not refresh_token:
-        raise ValueError("Falta la variable de entorno API_REFRESH_TOKEN")
-
-   # url = "https://portfolio-api-x6xk.onrender.com/api/token/refresh/"
-    url = "http://127.0.0.1:10000/api/projects/"
-
-    resp = requests.post(url, json={"refresh": refresh_token}, timeout=10)
-
-    # Si el refresh token no es válido o expiró
-    if resp.status_code != 200:
-        detail = resp.json().get("detail", "")
-        if "not valid" in detail.lower() or "invalid" in detail.lower():
-            raise ValueError(
-                "❌ El refresh token no es válido o ha expirado. "
-                "Genera uno nuevo desde la ruta /api/token/ en tu backend principal."
-            )
-        raise ValueError(f"Error al refrescar token: {resp.text}")
-
-    data = resp.json()
-    access = data.get("access")
-    if not access:
-        raise ValueError("No se recibió un access token válido en la respuesta.")
-
-    return access
-
-
-# --- 🧱 Clase base con soporte CORS ---
+# --- 🧱 Clase base con soporte CORS y JWT ---
 class BaseProxyView(View):
+    authentication_classes = [JWTAuthentication]
+
     def add_cors_headers(self, response):
         allowed_origins = [
             "https://andres-gutierrez.vercel.app",
@@ -56,24 +31,33 @@ class BaseProxyView(View):
         response = JsonResponse({"detail": "OK"})
         return self.add_cors_headers(response)
 
+    def authenticate(self):
+        """Valida JWT enviado en Authorization header."""
+        auth_header = self.request.headers.get("Authorization")
+        if not auth_header:
+            raise PermissionError("Falta el token de autorización")
+
+        try:
+            auth = JWTAuthentication()
+            validated_token = auth.get_validated_token(auth_header.split()[1])
+            user = auth.get_user(validated_token)
+            return user
+        except (InvalidToken, TokenError, IndexError) as e:
+            raise PermissionError(f"Token inválido: {str(e)}")
+
 
 # --- 📦 Proxy para Projects ---
 class ProjectsProxyView(BaseProxyView):
     def get(self, request):
         try:
-            access = get_access_token()
-            headers = {"Authorization": f"Bearer {access}"}
-
-            r = requests.get(
-                "https://portfolio-api-x6xk.onrender.com/api/projects/",
-                headers=headers,
-                timeout=10,
-            )
-            r.raise_for_status()
-
-            response = JsonResponse(r.json(), safe=False)
+            user = self.authenticate()  # valida JWT
+            projects = Project.objects.all()
+            serializer = ProjectSerializer(projects, many=True)
+            response = JsonResponse(serializer.data, safe=False)
             return self.add_cors_headers(response)
-
+        except PermissionError as e:
+            response = JsonResponse({"error": str(e)}, status=401)
+            return self.add_cors_headers(response)
         except Exception as e:
             print("❌ Error en proxy Projects:", e)
             response = JsonResponse({"error": str(e)}, status=500)
@@ -84,19 +68,15 @@ class ProjectsProxyView(BaseProxyView):
 class ExperiencesProxyView(BaseProxyView):
     def get(self, request):
         try:
-            access = get_access_token()
-            headers = {"Authorization": f"Bearer {access}"}
-
-            r = requests.get(
-                "https://portfolio-api-x6xk.onrender.com/api/experiences/",
-                headers=headers,
-                timeout=10,
-            )
-            r.raise_for_status()
-
-            response = JsonResponse(r.json(), safe=False)
+            user = self.authenticate()  # valida JWT
+            experiences = Experience.objects.all()
+            serializer = ExperienceSerializer(experiences, many=True)
+            response = JsonResponse(serializer.data, safe=False)
             return self.add_cors_headers(response)
-
+        except PermissionError as e:
+            response = JsonResponse({"error": str(e)}, status=401)
+            return self.add_cors_headers(response)
         except Exception as e:
+            print("❌ Error en proxy Experiences:", e)
             response = JsonResponse({"error": str(e)}, status=500)
             return self.add_cors_headers(response)
