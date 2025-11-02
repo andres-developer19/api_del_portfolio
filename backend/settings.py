@@ -60,16 +60,10 @@ MIDDLEWARE = [
 # -----------------------------
 ALLOWED_HOSTS = [
     'portfolio-api-x6xk.onrender.com',
-    'localhost',
     "https://andres-gutierrez.vercel.app",
-    "https://andres-developer-s3mh.vercel.app",
-    "https://portfolio-api-x6xk.onrender.com/proxy/projects/",
-    "https://portfolio-api-x6xk.onrender.com/proxy/experiences/",
-    '127.0.0.1',  # si haces peticiones desde tu front
+    "https://andres-developer-s3mh.vercel.app", # si haces peticiones desde tu front
     "http://localhost:3000",                      # si pruebas localmente con React o Next.js
     "http://127.0.0.1:3000",  
-    'https://portfolio-api-x6xk.onrender.com/proxy/projects/',
-    'https://portfolio-api-x6xk.onrender.com/proxy/experiences/',
 ]
 
 # -----------------------------
@@ -78,8 +72,10 @@ ALLOWED_HOSTS = [
 CORS_ALLOWED_ORIGINS = [
     "https://andres-gutierrez.vercel.app",
     "https://andres-developer-s3mh.vercel.app",
-    "https://portfolio-api-x6xk.onrender.com/proxy/projects/",
-    "https://portfolio-api-x6xk.onrender.com/proxy/experiences/",
+    #"https://portfolio-api-x6xk.onrender.com/proxy/projects/",
+    #"https://portfolio-api-x6xk.onrender.com/proxy/experiences/",  # si haces peticiones desde tu front
+    "http://localhost:3000",                      # si pruebas localmente con React o Next.js
+    "http://127.0.0.1:3000",  
 ]
 
 # -----------------------------
