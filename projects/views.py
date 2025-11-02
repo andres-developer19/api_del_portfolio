@@ -6,11 +6,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all().order_by('-created_at')
     serializer_class = ProjectSerializer
 
+
     def get_permissions(self):
-        # Lectura pública
         if self.action in ['list', 'retrieve']:
-            permission_classes = [permissions.AllowAny]
-        # Modificaciones solo para administradores
+            permission_classes = [permissions.IsAuthenticated]  # lectura con token
         else:
-            permission_classes = [permissions.IsAdminUser]
+            permission_classes = [permissions.IsAdminUser]  # escritura solo admins
         return [permission() for permission in permission_classes]
