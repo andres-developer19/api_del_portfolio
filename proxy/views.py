@@ -23,21 +23,22 @@ def get_access_token():
 
 
 # --- 🧱 Clase base con soporte CORS ---
-class BaseProxyView(View):
-    def add_cors_headers(self, response):
-        """
-        Añade cabeceras CORS para permitir solicitudes desde tus dominios frontend.
-        """
-        allowed_origins = [
-            "https://andres-gutierrez.vercel.app",
-            "https://andres-developer-s3mh.vercel.app",
-        ]
-        origin = self.request.headers.get("Origin")
-        if origin in allowed_origins:
-            response["Access-Control-Allow-Origin"] = origin
-        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        return response
+    class BaseProxyView(View):
+        def add_cors_headers(self, response):
+            allowed_origins = [
+                "https://andres-gutierrez.vercel.app",
+                "https://andres-developer-s3mh.vercel.app",
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+            ]
+            origin = self.request.headers.get("Origin")
+            if origin in allowed_origins:
+                response["Access-Control-Allow-Origin"] = origin
+                response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+                response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+                response["Access-Control-Allow-Credentials"] = "true"
+            return response
+
 
     def options(self, request, *args, **kwargs):
         """Responde a las peticiones OPTIONS (preflight de CORS)."""
