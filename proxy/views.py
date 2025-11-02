@@ -11,12 +11,25 @@ def get_access_token():
     if not refresh_token:
         raise ValueError("Falta la variable de entorno API_REFRESH_TOKEN")
 
-    resp = requests.post("https://portfolio-api-x6xk.onrender.com/api/token/refresh/",json={"refresh": refresh_token},    )
+    url = "https://portfolio-api-x6xk.onrender.com/api/token/refresh/"
+    resp = requests.post(url, json={"refresh": refresh_token}, timeout=10)
 
+    # Si el refresh token no es válido o expiró
     if resp.status_code != 200:
+        detail = resp.json().get("detail", "")
+        if "not valid" in detail.lower() or "invalid" in detail.lower():
+            raise ValueError(
+                "❌ El refresh token no es válido o ha expirado. "
+                "Genera uno nuevo desde la ruta /api/token/ en tu backend principal."
+            )
         raise ValueError(f"Error al refrescar token: {resp.text}")
 
-    return resp.json()["access"]
+    data = resp.json()
+    access = data.get("access")
+    if not access:
+        raise ValueError("No se recibió un access token válido en la respuesta.")
+
+    return access
 
 
 # --- 🧱 Clase base con soporte CORS ---
@@ -35,7 +48,6 @@ class BaseProxyView(View):
             response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
             response["Access-Control-Allow-Credentials"] = "true"
         return response
-
 
     def options(self, request, *args, **kwargs):
         """Responde a las peticiones OPTIONS (preflight de CORS)."""
