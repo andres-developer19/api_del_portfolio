@@ -3,32 +3,22 @@ import requests
 from django.http import JsonResponse
 from django.views import View
 
-class ProjectsProxyView(View):
-    def get(self, request):
-        api_url = 'https://portfolio-api-x6xk.onrender.com/api/projects/'
+# Función para obtener un access token desde el refresh token
+def get_access_token():
+    refresh_token = os.environ.get("API_REFRESH_TOKEN")
+    if not refresh_token:
+        raise ValueError("No se encontró la variable de entorno API_REFRESH_TOKEN")
 
-        # Obtiene token de refresh automáticamente
-        refresh_token = os.environ.get('API_REFRESH_TOKEN')
-        token_resp = requests.post(
-            f'https://portfolio-api-x6xk.onrender.com/api/token/refresh/',
-            json={"refresh": refresh_token}
-        )
+    resp = requests.post(
+        "https://portfolio-api-x6xk.onrender.com/api/token/refresh/",
+        json={"refresh": refresh_token}
+    )
+    if resp.status_code != 200:
+        raise ValueError("No se pudo obtener token de acceso")
 
-        if token_resp.status_code != 200:
-            return JsonResponse({"error": "No se pudo obtener token"}, status=500)
-
-        access_token = token_resp.json().get("access")
-        headers = {"Authorization": f"Bearer {access_token}"}
-
-        response = requests.get(api_url, headers=headers)
-
-        if response.status_code != 200:
-            return JsonResponse({"error": "Error al obtener data de la API"}, status=response.status_code)
-
-        return JsonResponse(response.json(), safe=False)
+    return resp.json().get("access")
 
 
-# Proxy para Projects
 class ProjectsProxyView(View):
     def get(self, request):
         try:
@@ -38,13 +28,12 @@ class ProjectsProxyView(View):
                 "https://portfolio-api-x6xk.onrender.com/api/projects/",
                 headers=headers
             )
-            r.raise_for_status()  # lanza error si el status no es 200
+            r.raise_for_status()
             return JsonResponse(r.json(), safe=False)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
 
-# Proxy para Experiences
 class ExperiencesProxyView(View):
     def get(self, request):
         try:
