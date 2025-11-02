@@ -2,31 +2,36 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
+# -----------------------------
+# BASE DIR
+# -----------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # -----------------------------
-# ARCHIVOS MEDIA (imagenes)
+# SECRET KEY
 # -----------------------------
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+# 🔒 Nunca pongas la clave en el repo. Usa variables de entorno en Render:
+SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-secret-key')
 
 # -----------------------------
-# CONFIGURACIÓN GENERAL
-# ----------------------------- 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-secret-key') # 🔒 Ocúltala en Render como variable de entorno
-DEBUG = False
+# DEBUG
+# -----------------------------
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+# -----------------------------
+# ALLOWED HOSTS
+# -----------------------------
 ALLOWED_HOSTS = [
     'portfolio-api-x6xk.onrender.com',
-    'https://andres-developer-s3mh.vercel.app', 
     'localhost',
     '127.0.0.1'
 ]
 
 # -----------------------------
-# APLICACIONES INSTALADAS
+# APPS
 # -----------------------------
 INSTALLED_APPS = [
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
 
-    # Tus apps
+    # Apps propias
     'projects',
     'experience',
 ]
@@ -48,7 +53,7 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 # -----------------------------
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Debe ir arriba
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -59,25 +64,22 @@ MIDDLEWARE = [
 ]
 
 # -----------------------------
-# CORS (solo permite tu sitio)
+# CORS
 # -----------------------------
 CORS_ALLOWED_ORIGINS = [
     "https://andres-gutierrez.vercel.app",
     "https://andres-developer-s3mh.vercel.app"
 ]
 
-# Si quieres aceptar peticiones desde el admin de Django en desarrollo:
-# CORS_ALLOW_ALL_ORIGINS = DEBUG
-
 # -----------------------------
-# CONFIGURACIÓN REST FRAMEWORK
+# REST FRAMEWORK + JWT
 # -----------------------------
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',  # JWT obligatorio en todas las rutas
     ],
 }
 
@@ -87,11 +89,11 @@ SIMPLE_JWT = {
 }
 
 # -----------------------------
-# BASE DE DATOS
+# DATABASE
 # -----------------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # ⚙️ Si usas MySQL cámbialo aquí
+        'ENGINE': 'django.db.backends.sqlite3',  # Cambiar a MySQL/PostgreSQL si quieres
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -115,19 +117,42 @@ USE_I18N = True
 USE_TZ = True
 
 # -----------------------------
-# ARCHIVOS ESTÁTICOS
+# STATIC
 # -----------------------------
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Django recopila aquí todos los static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Carpeta donde collectstatic pone todos los static
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-#SECRET_KEY = 'django-insecure-6f@r1du-shmdd2adltr1-3-9g^u@q+o_6lo$1-08(l(aqq$9#j'
-ROOT_URLCONF = 'backend.urls'
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-MEDIA_URL = '/media/'                 # URL pública
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Carpeta donde se guardan las imágenes
+# -----------------------------
+# MEDIA
+# -----------------------------
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 if not os.path.exists(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
+
+# -----------------------------
+# TEMPLATES (para admin)
+# -----------------------------
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],  # opcional: rutas a tus carpetas de templates
+        'APP_DIRS': True,  # muy importante para admin
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',  # obligatorio para admin
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+
+# -----------------------------
+# URLS y AUTO FIELD
+# -----------------------------
+ROOT_URLCONF = 'backend.urls'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
