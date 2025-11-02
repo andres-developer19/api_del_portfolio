@@ -70,6 +70,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "https://andres-gutierrez.vercel.app",
     "https://andres-developer-s3mh.vercel.app",
+    "https://portfolio-api-x6xk.onrender.com/proxy/projects/",
+    "https://portfolio-api-x6xk.onrender.com/proxy/experiences/",
 ]
 
 # -----------------------------
