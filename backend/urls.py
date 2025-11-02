@@ -25,6 +25,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('proxy/', include('proxy.urls')),  # ✅ Agregamos el proxy
     path('api/', include('projects.urls')),    
     path('api/', include('experience.urls')),
     # Autenticación JWT

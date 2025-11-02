@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # Apps propias
     'projects',
     'experience',
+    'proxy',
 ]
 
 # -----------------------------
@@ -68,7 +69,7 @@ MIDDLEWARE = [
 # -----------------------------
 CORS_ALLOWED_ORIGINS = [
     "https://andres-gutierrez.vercel.app",
-    "https://andres-developer-s3mh.vercel.app"
+    "https://andres-developer-s3mh.vercel.app",
 ]
 
 # -----------------------------
