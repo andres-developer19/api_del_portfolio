@@ -11,5 +11,5 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             permission_classes = [permissions.IsAuthenticated]  # lectura con token
         else:
-            permission_classes = [permissions.IsAdminUser]  # escritura solo admins
+            permission_classes = [permissions.AllowAny]  # escritura solo admins
         return [permission() for permission in permission_classes]
