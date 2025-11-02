@@ -65,7 +65,11 @@ ALLOWED_HOSTS = [
     "https://andres-developer-s3mh.vercel.app",
     "https://portfolio-api-x6xk.onrender.com/proxy/projects/",
     "https://portfolio-api-x6xk.onrender.com/proxy/experiences/",
-    '127.0.0.1',
+    '127.0.0.1',  # si haces peticiones desde tu front
+    "http://localhost:3000",                      # si pruebas localmente con React o Next.js
+    "http://127.0.0.1:3000",  
+    'https://portfolio-api-x6xk.onrender.com/proxy/projects/',
+    'https://portfolio-api-x6xk.onrender.com/proxy/experiences/',
 ]
 
 # -----------------------------
