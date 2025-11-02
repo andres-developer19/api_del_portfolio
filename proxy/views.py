@@ -3,7 +3,7 @@ from django.views import View
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from projects.models import Project
-from projects.serializers import ProjectSerializer
+from projects.serializer import ProjectSerializer
 from experience.models import Experience
 from experience.serializers import ExperienceSerializer
 
