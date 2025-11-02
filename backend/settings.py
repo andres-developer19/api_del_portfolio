@@ -118,6 +118,16 @@ USE_TZ = True
 # ARCHIVOS ESTÁTICOS
 # -----------------------------
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Django recopila aquí todos los static files
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #SECRET_KEY = 'django-insecure-6f@r1du-shmdd2adltr1-3-9g^u@q+o_6lo$1-08(l(aqq$9#j'
 ROOT_URLCONF = 'backend.urls'
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+MEDIA_URL = '/media/'                 # URL pública
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Carpeta donde se guardan las imágenes
+
+if not os.path.exists(MEDIA_ROOT):
+    os.makedirs(MEDIA_ROOT)
