@@ -73,6 +73,7 @@ class ProjectsProxyView(BaseProxyView):
             return self.add_cors_headers(response)
 
         except Exception as e:
+            print("❌ Error en proxy Projects:", e)
             response = JsonResponse({"error": str(e)}, status=500)
             return self.add_cors_headers(response)
 
