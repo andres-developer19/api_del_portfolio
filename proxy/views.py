@@ -6,7 +6,7 @@ from django.views import View
 
 # --- 🔑 Función para obtener un nuevo access token automáticamente ---
 def get_access_token():
-    refresh_token = "eyJhbGciOiJIUzeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2MjcwMzk5NSwiaWF0IjoxNzYyMDk5MTk1LCJqdGkiOiIyOWFkNGRiYTRmZDk0NThkYmMyYmYzMzAyMGFkMDY2YSIsInVzZXJfaWQiOiIxIn0.ngBKRMXYTEv6kiEph1vm7zK5JCEzv2E93hMb4XT_1yU"#os.environ.get("API_REFRESH_TOKEN")
+    refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2MjcyMDc4MiwiaWF0IjoxNzYyMTE1OTgyLCJqdGkiOiJmZmZkYjhiYjM2ZWI0ZWExYTQ1ZWNjNDI5YTVlMWU2NSIsInVzZXJfaWQiOiIxIn0.baDRI5lF_u7QK-9dh3Izr0qP3s8i4On1ROX-1mHfIUk"#os.environ.get("API_REFRESH_TOKEN")
 
     if not refresh_token:
         raise ValueError("Falta la variable de entorno API_REFRESH_TOKEN")
