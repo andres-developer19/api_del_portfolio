@@ -3,21 +3,29 @@ import requests
 from django.http import JsonResponse
 from django.views import View
 
-# Función para obtener un access token válido usando el refresh token
-def get_access_token():
-    refresh_token = os.environ.get("API_REFRESH_TOKEN")
-    if not refresh_token:
-        raise Exception("No se encontró la variable de entorno API_REFRESH_TOKEN")
+class ProjectsProxyView(View):
+    def get(self, request):
+        api_url = 'https://portfolio-api-x6xk.onrender.com/api/projects/'
 
-    resp = requests.post(
-        "https://portfolio-api-x6xk.onrender.com/api/token/refresh/",
-        json={"refresh": refresh_token}
-    )
+        # Obtiene token de refresh automáticamente
+        refresh_token = os.environ.get('API_REFRESH_TOKEN')
+        token_resp = requests.post(
+            f'https://portfolio-api-x6xk.onrender.com/api/token/refresh/',
+            json={"refresh": refresh_token}
+        )
 
-    if resp.status_code != 200:
-        raise Exception("No se pudo refrescar el token: " + resp.text)
+        if token_resp.status_code != 200:
+            return JsonResponse({"error": "No se pudo obtener token"}, status=500)
 
-    return resp.json()["access"]
+        access_token = token_resp.json().get("access")
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        response = requests.get(api_url, headers=headers)
+
+        if response.status_code != 200:
+            return JsonResponse({"error": "Error al obtener data de la API"}, status=response.status_code)
+
+        return JsonResponse(response.json(), safe=False)
 
 
 # Proxy para Projects
