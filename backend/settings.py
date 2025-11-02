@@ -19,19 +19,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # -----------------------------
-# ALLOWED HOSTS
-# -----------------------------
-ALLOWED_HOSTS = [
-    'portfolio-api-x6xk.onrender.com',
-    'localhost',
-    "https://andres-gutierrez.vercel.app",
-    "https://andres-developer-s3mh.vercel.app",
-    "https://portfolio-api-x6xk.onrender.com/proxy/projects/",
-    "https://portfolio-api-x6xk.onrender.com/proxy/experiences/",
-    '127.0.0.1',
-]
-
-# -----------------------------
 # APPS
 # -----------------------------
 INSTALLED_APPS = [
@@ -66,6 +53,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# -----------------------------
+# ALLOWED HOSTS
+# -----------------------------
+ALLOWED_HOSTS = [
+    'portfolio-api-x6xk.onrender.com',
+    'localhost',
+    "https://andres-gutierrez.vercel.app",
+    "https://andres-developer-s3mh.vercel.app",
+    "https://portfolio-api-x6xk.onrender.com/proxy/projects/",
+    "https://portfolio-api-x6xk.onrender.com/proxy/experiences/",
+    '127.0.0.1',
 ]
 
 # -----------------------------
