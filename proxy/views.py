@@ -29,7 +29,9 @@ class ProjectsProxyView(View):
                 headers=headers
             )
             r.raise_for_status()
-            return JsonResponse(r.json(), safe=False)
+            response = JsonResponse(r.json(), safe=False)
+            response["Access-Control-Allow-Origin"] = "https://andres-developer-s3mh.vercel.app"
+            return response
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
@@ -44,6 +46,8 @@ class ExperiencesProxyView(View):
                 headers=headers
             )
             r.raise_for_status()
-            return JsonResponse(r.json(), safe=False)
+            response = JsonResponse(r.json(), safe=False)
+            response["Access-Control-Allow-Origin"] = "https://andres-developer-s3mh.vercel.app"
+            return response
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
