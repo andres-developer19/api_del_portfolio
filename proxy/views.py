@@ -11,7 +11,9 @@ def get_access_token():
     if not refresh_token:
         raise ValueError("Falta la variable de entorno API_REFRESH_TOKEN")
 
-    url = "https://portfolio-api-x6xk.onrender.com/api/token/refresh/"
+   # url = "https://portfolio-api-x6xk.onrender.com/api/token/refresh/"
+    url = "http://127.0.0.1:10000/api/projects/"
+
     resp = requests.post(url, json={"refresh": refresh_token}, timeout=10)
 
     # Si el refresh token no es válido o expiró
