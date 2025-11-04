@@ -1,8 +1,7 @@
-import os
-import requests
-from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.views import View
+import os, requests
+from datetime import datetime, timedelta
 
 class BaseProxyView(View):
     token = None
@@ -21,23 +20,32 @@ class BaseProxyView(View):
         if response.status_code == 200:
             data = response.json()
             self.token = data.get("access")
-            # si tu JWT dura 5 minutos, puedes ajustar aquí
             self.token_expiration = datetime.now() + timedelta(minutes=4)
             return self.token
         else:
             raise Exception("Error al obtener token JWT")
 
+    def add_cors_headers(self, response):
+        """Agrega los encabezados CORS necesarios."""
+        response["Access-Control-Allow-Origin"] = "*"  # o tu dominio exacto
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+
     def proxy_request(self, endpoint):
         """Hace la petición a la API original con autenticación automática."""
-        token = self.get_token()
-        headers = {"Authorization": f"Bearer {token}"}
-        api_url = f"https://portfolio-api-x6xk.onrender.com/{endpoint}/"  # tu API real
-        response = requests.get(api_url, headers=headers)
+        try:
+            token = self.get_token()
+            headers = {"Authorization": f"Bearer {token}"}
+            api_url = f"https://portfolio-api-x6xk.onrender.com/{endpoint}/"
+            response = requests.get(api_url, headers=headers)
 
-        if response.status_code == 200:
-            return JsonResponse(response.json(), safe=False)
-        else:
-            return JsonResponse({"error": "Error al obtener datos del backend"}, status=response.status_code)
+            json_response = JsonResponse(response.json(), safe=False, status=response.status_code)
+            return self.add_cors_headers(json_response)
+
+        except Exception as e:
+            error_response = JsonResponse({"error": str(e)}, status=500)
+            return self.add_cors_headers(error_response)
 
 
 class ProjectsProxyView(BaseProxyView):
