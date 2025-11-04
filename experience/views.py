@@ -6,9 +6,7 @@ class ExperienceViewSet(viewsets.ModelViewSet):
     queryset = Experience.objects.all()
     serializer_class = ExperienceSerializer
 
-def get_permissions(self):
-    if self.action in ['list', 'retrieve']:
-        permission_classes = [permissions.IsAuthenticated]  # lectura con token
-    else:
-        permission_classes = [permissions.IsAdminUser]  # escritura solo admins
-    return [permission() for permission in permission_classes]
+    def get_permissions(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return [permissions.AllowAny()]  # GET, HEAD, OPTIONS → público
+        return [permissions.IsAuthenticated()]  # POST, PUT, DELETE → requiere token

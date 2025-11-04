@@ -8,8 +8,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            permission_classes = [permissions.IsAuthenticated]  # lectura con token
-        else:
-            permission_classes = [permissions.IsAuthenticated]  # escritura solo admins
-        return [permission() for permission in permission_classes]
+        if self.request.method in permissions.SAFE_METHODS:
+            return [permissions.AllowAny()]  # GET, HEAD, OPTIONS → público
+        return [permissions.IsAuthenticated()]  # POST, PUT, DELETE → requiere token
