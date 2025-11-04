@@ -5,18 +5,17 @@ import requests
 class BaseProxyView(View):
     def add_cors_headers(self, response):
         """Agrega los encabezados CORS necesarios."""
-        response["Access-Control-Allow-Origin"] = "*"  # o tu dominio exacto
+        response["Access-Control-Allow-Origin"] = "*"  # o usa tu dominio exacto de Vercel
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
         return response
 
     def proxy_request(self, endpoint):
-        """Hace la petición pública (sin autenticación) a la API original."""
+        """Hace la petición pública a la API original (sin token)."""
         try:
             api_url = f"https://portfolio-api-x6xk.onrender.com/{endpoint}/"
-            response = requests.get(api_url)
+            response = requests.get(api_url, timeout=10)
 
-            # Si la API respondió correctamente
             if response.status_code == 200:
                 json_response = JsonResponse(response.json(), safe=False)
             else:
