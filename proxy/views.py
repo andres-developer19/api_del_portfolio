@@ -38,7 +38,7 @@ class BaseProxyView(View):
             token = self.get_token()
             headers = {"Authorization": f"Bearer {token}"}
             api_url = f"https://portfolio-api-x6xk.onrender.com/{endpoint}/"
-            response = requests.get(api_url, headers=headers)
+            response = requests.get(api_url)
 
             json_response = JsonResponse(response.json(), safe=False, status=response.status_code)
             return self.add_cors_headers(json_response)
