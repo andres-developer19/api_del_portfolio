@@ -8,5 +8,5 @@ class ExperienceViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method in permissions.SAFE_METHODS:
-            return [permissions.IsAuthenticated()]  # GET, HEAD, OPTIONS → público
+            return [permissions.AllowAny()]  # GET, HEAD, OPTIONS → público
         return [permissions.IsAuthenticated()]  # POST, PUT, DELETE → requiere token
