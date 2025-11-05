@@ -2,10 +2,11 @@
 from django.http import JsonResponse
 from django.views import View
 import requests
+import os
 
 class BaseProxyView(View):
     def add_cors_headers(self, response):
-        response["Access-Control-Allow-Origin"] = "*"  # o tu dominio exacto de Vercel
+        response["Access-Control-Allow-Origin"] = "*"  # o tu dominio de Vercel
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
         return response
@@ -13,9 +14,9 @@ class BaseProxyView(View):
     def proxy_request(self, endpoint):
         """Hace la petición pública a la API real (sin token)."""
         try:
-            # 🔹 Cambiar a la URL real del API interno, no la del proxy
-            api_url = f"https://portfolio-api-x6xk.onrender.com/api/{endpoint}/"
-            response = requests.get(api_url, timeout=10)
+            PORT = os.getenv("PORT", "10000")  # Puerto interno de Render
+            api_url = f"http://127.0.0.1:{PORT}/api/{endpoint}/"
+            response = requests.get(api_url, timeout=20)
 
             if response.status_code == 200:
                 json_response = JsonResponse(response.json(), safe=False)
@@ -32,7 +33,6 @@ class BaseProxyView(View):
             return self.add_cors_headers(error_response)
 
 
-# --- 🔹 Vistas públicas ---
 class ProjectsProxyView(BaseProxyView):
     def get(self, request):
         return self.proxy_request("projects")
