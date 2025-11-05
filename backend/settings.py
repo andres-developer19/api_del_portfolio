@@ -63,7 +63,8 @@ ALLOWED_HOSTS = [
     "https://andres-gutierrez.vercel.app",
     "https://andres-developer-s3mh.vercel.app", # si haces peticiones desde tu front
     "http://localhost:3000",                      # si pruebas localmente con React o Next.js
-    "http://127.0.0.1:3000",  
+    "http://127.0.0.1:3000", 
+    "127.0.0.1", "localhost" 
 ]
 
 # -----------------------------

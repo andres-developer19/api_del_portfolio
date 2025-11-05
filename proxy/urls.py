@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import ProjectsProxyView, ExperiencesProxyView
+from .views import PublicProjectsView, PublicExperiencesView
 
 urlpatterns = [
-    path('projects/', ProjectsProxyView.as_view(), name='projects_proxy'),
-    path('experiences/', ExperiencesProxyView.as_view(), name='experiences_proxy'),
+    path("projects/", PublicProjectsView.as_view(), name="public-projects"),
+    path("experiences/", PublicExperiencesView.as_view(), name="public-experiences"),
 ]

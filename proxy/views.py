@@ -1,43 +1,36 @@
-# proxy/views.py
 from django.http import JsonResponse
 from django.views import View
-import requests
-import os
+from projects.models import Project
+from experience.models import Experience
+from projects.serializer import ProjectSerializer
+from experience.serializers import ExperienceSerializer
 
-class BaseProxyView(View):
+
+class BasePublicView(View):
     def add_cors_headers(self, response):
-        response["Access-Control-Allow-Origin"] = "*"  # o tu dominio de Vercel
+        allowed_origins = [
+            "https://andres-gutierrez.vercel.app",
+            "https://andres-developer-s3mh.vercel.app",
+        ]
+        origin = self.request.headers.get("Origin")
+        if origin in allowed_origins:
+            response["Access-Control-Allow-Origin"] = origin
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response["Access-Control-Allow-Headers"] = "Content-Type"
         return response
 
-    def proxy_request(self, endpoint):
-        """Hace la petición pública a la API real (sin token)."""
-        try:
-            PORT = os.getenv("PORT", "10000")  # Puerto interno de Render
-            api_url = f"http://127.0.0.1:{PORT}/api/{endpoint}/"
-            response = requests.get(api_url, timeout=20)
 
-            if response.status_code == 200:
-                json_response = JsonResponse(response.json(), safe=False)
-            else:
-                json_response = JsonResponse(
-                    {"error": f"Error en la API: {response.status_code}"},
-                    status=response.status_code
-                )
-
-            return self.add_cors_headers(json_response)
-
-        except Exception as e:
-            error_response = JsonResponse({"error": str(e)}, status=500)
-            return self.add_cors_headers(error_response)
-
-
-class ProjectsProxyView(BaseProxyView):
+class PublicProjectsView(BasePublicView):
     def get(self, request):
-        return self.proxy_request("projects")
+        projects = Project.objects.all().order_by("-id")
+        serializer = ProjectSerializer(projects, many=True)
+        response = JsonResponse(serializer.data, safe=False)
+        return self.add_cors_headers(response)
 
 
-class ExperiencesProxyView(BaseProxyView):
+class PublicExperiencesView(BasePublicView):
     def get(self, request):
-        return self.proxy_request("experiences")
+        experiences = Experience.objects.all().order_by("-id")
+        serializer = ExperienceSerializer(experiences, many=True)
+        response = JsonResponse(serializer.data, safe=False)
+        return self.add_cors_headers(response)
