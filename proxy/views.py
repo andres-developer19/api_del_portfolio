@@ -11,6 +11,7 @@ class BasePublicView(View):
         allowed_origins = [
             "https://andres-gutierrez.vercel.app",
             "https://andres-developer-s3mh.vercel.app",
+            "https://andres-developer.vercel.app",
         ]
         origin = self.request.headers.get("Origin")
         if origin in allowed_origins:
