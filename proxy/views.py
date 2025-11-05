@@ -20,13 +20,16 @@ class BasePublicView(View):
         response["Access-Control-Allow-Headers"] = "Content-Type"
         return response
 
-
 class PublicProjectsView(BasePublicView):
     def get(self, request):
-        projects = Project.objects.all().order_by("-id")
-        serializer = ProjectSerializer(projects, many=True)
-        response = JsonResponse(serializer.data, safe=False)
-        return self.add_cors_headers(response)
+        try:
+            projects = Project.objects.all().order_by("-id")
+            serializer = ProjectSerializer(projects, many=True, context={'request': request})
+            response = JsonResponse(serializer.data, safe=False)
+            return self.add_cors_headers(response)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
 
 
 class PublicExperiencesView(BasePublicView):
