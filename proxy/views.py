@@ -35,6 +35,6 @@ class PublicProjectsView(BasePublicView):
 class PublicExperiencesView(BasePublicView):
     def get(self, request):
         experiences = Experience.objects.all().order_by("-id")
-        serializer = ExperienceSerializer(experiences, many=True)
+        serializer = ExperienceSerializer(experiences, many=True, context={'request': request})
         response = JsonResponse(serializer.data, safe=False)
         return self.add_cors_headers(response)
